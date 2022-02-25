@@ -1,0 +1,24 @@
+@startuml
+!include https://raw.githubusercontent.com/adrianvlupu/C4-PlantUML/latest/C4_Container.puml
+
+LAYOUT_LEFT_RIGHT()
+LAYOUT_WITH_LEGEND()
+
+Person(sasca, "SAS Consumer", "Consumidores da API de envio de Push Notification.")
+System_Ext(pw, "Pushwoosh System", "Serviço de Push Notification multi-canais.")
+Person_Ext(sasrb, "SAS Beneficiário", "Beneficiários que receberam as notificações.")
+System_Boundary(pns, "Push Notification System") {
+    ContainerDb(db, "Datastore", "Banco de dados NoSQL altamente escalonável", "Armazena informações de registro do usuário, credenciais de autenticação com hash, registros de acesso, etc.")
+    Container_Ext(dy, "Observabilidade", "Dynatrace", "Medir o estado de um sistema ser inferidos a partir do conhecimento de suas saídas externas.")
+    Container(api, "API Push Notification", "Nodejs e Typescript", "Provedor das funcionalidades de Push Notification via a JSON/HTTP API.")
+    Container(web, "Web Aplication", "Next.js", "Provedor das funcionalidades de Push Notification via interface web.")
+
+    Rel(api, db, "Leituras e Escritas", "nodejs-firestore")
+    Rel(api, dy, "Eventos", "https")
+    Rel(web, api, "Consumidores", "json/https")
+}
+
+Rel(sasca, api, "Consumidores", "https")
+Rel(api, pw, "Criação das Notificações", "https")
+Rel(pw, sasrb, "Recebedores", "subscribe")
+@enduml

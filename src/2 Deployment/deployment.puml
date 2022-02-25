@@ -1,0 +1,45 @@
+@startuml
+!include https://raw.githubusercontent.com/adrianvlupu/C4-PlantUML/latest/C4_Deployment.puml
+
+LAYOUT_LEFT_RIGHT()
+LAYOUT_WITH_LEGEND()
+
+Deployment_Node(pns, "Push Notification System", "Estrutura") {
+    Deployment_Node(smpn, "Google GKE") {
+        Deployment_Node(gke, "sas-mobile-push-notification - x1/n") {
+            Container(api, "API Push Notification", "Nodejs e Typescript", "Fornece funcionalidades de Push Notification via a JSON/HTTP API.")
+        }
+
+        Deployment_Node(gkew, "sas-mobile-push-notification - x1/n") {
+            Container(web, "Web Aplication", "Next.js", "Provedor das funcionalidades de Push Notification via interface web.")
+        }
+
+        Deployment_Node(bigbankdb01, "Banco de Dados NoSQL") {
+            Container(db, "Datastore", "Banco de dados NoSQL altamente escalonável", "Armazena informações de registro do usuário, credenciais de autenticação com hash, registros de acesso, etc.")
+        }
+    }
+
+    Deployment_Node(monitoring, "Observabilidade", "Monitoramento") {
+        Container_Ext(dy, "Dynatrace", "Medir o estado de um sistema ser inferidos a partir do conhecimento de suas saídas externas.")
+    }
+}
+
+Deployment_Node(serapl, "Serviços e Aplicações", "APIs, Aplicativos mobiles e web") {
+    Person(sa, "SAS Consumidor", "Consumidores da API de envio de Push Notification.")
+}
+
+Deployment_Node(app, "Aplicativos", "Android e iOS") {
+    Person_Ext(appai, "App Saúde e Odonto", "Fornece todas as funcionalidade para os beneficiários SulÁmerica.")
+}
+
+Deployment_Node(pushwoosh, "Push Notification", "Pub/Sub"){
+    Container_Ext(pw, "Pushwoosh", "Permite que os consumidores criem Push Notifications para nossos beneficiários")
+}
+
+Rel(web, api, "Consumidores", "json/https")
+Rel(serapl, smpn, "Chamadas na API", "json/https")
+Rel(api, db, "Leituras e Escritas", "nodejs-firestore")
+Rel(gke, monitoring, "Eventos", "https")
+Rel(gke, pushwoosh, "Chamadas na API", "json/https")
+Rel(pushwoosh, app, "Eventos", "subscribe")
+@enduml

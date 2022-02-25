@@ -1,0 +1,15 @@
+@startuml
+!include https://raw.githubusercontent.com/adrianvlupu/C4-PlantUML/latest/C4_Context.puml
+
+LAYOUT_LEFT_RIGHT()
+LAYOUT_WITH_LEGEND()
+
+Person(sasca, "SAS Consumer", "Consumidores da API de envio de Push Notification")
+System(pns, "Push Notification System", "Permite que os consumidores criem Push Notifications para nossos beneficiários")
+System_Ext(pw, "Pushwoosh System", "Serviço de Push Notification multi-canais")
+Person_Ext(sasrb, "SAS Beneficiário", "Beneficiários que receberam as notificações")
+
+Rel(sasca, pns, "Consumidores", "https")
+Rel(pns, pw, "Criação das Notificações", "https")
+Rel(pw, sasrb, "Recebedores", "subscribe")
+@enduml

@@ -1,0 +1,41 @@
+@startuml
+!include https://raw.githubusercontent.com/adrianvlupu/C4-PlantUML/latest/C4_Component.puml
+
+LAYOUT_LEFT_RIGHT()
+LAYOUT_WITH_LEGEND()
+
+System_Ext(pw, "Pushwoosh System", "Serviço de Push Notification multi-canais")
+Person_Ext(sasrb, "SAS Beneficiário", "Beneficiários que receberam as notificações")
+
+Container_Boundary(controller, "Endpoint Push Notification - Controller") {
+    Component(user, "Usuário Service", "Service", "Fornece informações dos beneficiários cadastrados para receber notificações")
+    Component(create, "Criação Service", "Service", "Fornce funcionalidades para criaçoes de notificações")
+    Component(statistic, "Estatistica Service", "Service", "Fornce funcionalidades para medir o CTR")
+    Component(segment, "Segmento Service", "Service", "Fornece informações das segmentações cadastradas para criação de notificações.")
+
+    Component(userr, "Usuário Repository", "Repository (Opcional)")
+    Component(creater, "Criação Repository", "Repository (Opcional)")
+    Component(statisticr, "Estatistica Repository", "Repository (Opcional)")
+    Component(segmentr, "Segmento Repository", "Repository (Opcional)")
+
+    Component(usere, "Usuário Entity", "Entity")
+    Component(createe, "Criação Entity", "Entity")
+    Component(statistice, "Estatistica Entity", "Entity")
+    Component(segmente, "Segmento Entity", "Entity")
+
+    Rel(user, userr, "Classe", "di")
+    Rel(userr, usere, "Classe", "di")
+
+    Rel(create, creater, "Classe", "di")
+    Rel(creater, createe, "Classe", "di")
+
+    Rel(statistic, statisticr, "Classe", "di")
+    Rel(statisticr, statistice, "Classe", "di")
+
+    Rel(segment, segmentr, "Classe", "di")
+    Rel(segmentr, segmente, "Classe", "di")
+}
+
+Rel(controller, pw, "json", "https")
+Rel(pw, sasrb, "Eventos", "https")
+@enduml

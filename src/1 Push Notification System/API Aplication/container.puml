@@ -1,0 +1,20 @@
+@startuml
+!include https://raw.githubusercontent.com/adrianvlupu/C4-PlantUML/latest/C4_Component.puml
+
+LAYOUT_LEFT_RIGHT()
+LAYOUT_WITH_LEGEND()
+
+Container(dy, "Observabilidade", "Dynatrace", "Medir o estado de um sistema ser inferidos a partir do conhecimento de suas saídas externas.")
+ContainerDb(db, "Datastore", "Banco de dados NoSQL altamente escalonável", "Armazena informações de registro do usuário, credenciais de autenticação com hash, registros de acesso, etc.")
+System_Ext(pw, "Pushwoosh System", "Serviço de Push Notification multi-canais")
+
+Container_Boundary(api, "API Push Notification") {
+    Component(security, "Cofre de Senha", "Infraestrutura", "Fornece funcionalidades relacionadas a cadastrar, alterar senhas, etc.")
+    Component(dynatrace, "Dynatrace", "Infraestrutura", "Fornece funcionalidades relacionadas de integração com Dynatrace")
+    Component(pushwoosh, "Pushwoosh Controller", "Controller", "Fornece funcionalidades relacionadas de integração com Pushwoosh")
+
+    Rel(security, db, "Escrita e Leitura", "nodejs-firestore")
+    Rel(pushwoosh, pw, "JSON", "https")
+    Rel(dynatrace, dy, "Eventos", "https")
+}
+@enduml
